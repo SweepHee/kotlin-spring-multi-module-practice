@@ -1,6 +1,7 @@
 rootProject.name = "multimodule"
 
 include(
-    "core",
-    "common",
+    "gRPC-core",
+    "gRPC-server",
+    "gRPC-client"
 )

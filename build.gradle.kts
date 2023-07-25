@@ -9,6 +9,7 @@ plugins {
     kotlin("plugin.jpa") version "1.8.21"
     kotlin("plugin.noarg") version "1.8.21"
     kotlin("plugin.allopen") version "1.8.21"
+    id("com.google.protobuf") version "0.8.14"
 
 }
 
@@ -57,10 +58,12 @@ subprojects{
 }
 
 
-project(":core") {
+project(":gRPC-core") {
 
     apply(plugin = "kotlin-allopen")
     apply(plugin = "kotlin-noarg")
+    apply(plugin = "com.google.protobuf")
+
 
     allOpen {
         annotation("jakarta.persistence.Entity")
