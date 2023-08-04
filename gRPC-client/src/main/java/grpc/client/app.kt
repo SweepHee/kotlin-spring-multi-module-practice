@@ -1,4 +1,4 @@
-package com.example.multimodule
+package grpc.client
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

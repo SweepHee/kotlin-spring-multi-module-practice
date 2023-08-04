@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.google.protobuf.gradle.*
 
 plugins {
     java
@@ -60,9 +61,9 @@ subprojects{
 
 project(":gRPC-core") {
 
+    apply(plugin = "com.google.protobuf")
     apply(plugin = "kotlin-allopen")
     apply(plugin = "kotlin-noarg")
-    apply(plugin = "com.google.protobuf")
 
 
     allOpen {
@@ -77,10 +78,56 @@ project(":gRPC-core") {
         annotation("jakarta.persistence.MappedSuperclass")
     }
 
+    val grpcVersion = "3.21.9"
+    val grpcKotlinVersion = "1.2.1"
+    val grpcProtoVersion = "1.44.1"
+
+    sourceSets{
+        getByName("main"){
+            java {
+                srcDirs(
+                    "build/generated/source/proto/main/java",
+                    "build/generated/source/proto/main/kotlin"
+                )
+            }
+        }
+    }
+
+    protobuf {
+        protoc {
+            artifact = "com.google.protobuf:protoc:$grpcVersion"
+        }
+        plugins {
+            id("grpc") {
+                artifact = "io.grpc:protoc-gen-grpc-java:$grpcProtoVersion"
+            }
+            id("grpckt") {
+                artifact = "io.grpc:protoc-gen-grpc-kotlin:$grpcKotlinVersion:jdk7@jar"
+            }
+        }
+        generateProtoTasks {
+            all().forEach {
+                it.plugins {
+                    id("grpc")
+                    id("grpckt")
+                }
+                it.builtins {
+                    id("kotlin")
+                }
+            }
+        }
+    }
+
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter-data-jpa")
         implementation("org.springframework.boot:spring-boot-starter-jooq")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+        implementation ("io.grpc:grpc-kotlin-stub:${grpcKotlinVersion}")
+        implementation ("io.grpc:grpc-protobuf:${grpcProtoVersion}")
+        implementation ("com.google.protobuf:protobuf-kotlin:${grpcVersion}")
+        implementation ("io.grpc:grpc-stub:1.40.1")
+
         runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 
     }
